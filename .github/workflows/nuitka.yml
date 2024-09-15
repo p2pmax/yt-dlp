@@ -23,7 +23,7 @@ jobs:
 
       - name: Install Python dev dependencies
         run: |
-          conda install -c conda-forge libpython
+          conda install anaconda::libpython
 
       - name: Build Executable with Nuitka
         uses: Nuitka/Nuitka-Action@main
