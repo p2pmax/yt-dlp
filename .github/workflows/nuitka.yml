@@ -1,0 +1,44 @@
+name: Build nuitka
+
+on:
+    push:
+      branches: [ 'nuitka']
+jobs:
+  build:
+    strategy:
+      matrix:
+            os: [macos-13,macos-latest,windows-latest]
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: Check-out repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+
+      - name: Build Executable with Nuitka
+        uses: Nuitka/Nuitka-Action@main
+        with:
+          nuitka-version: main
+          script-name: yt_dlp/__main__.py
+          # many more Nuitka options available, see action doc, but it's best
+          # to use nuitka-project: options in your code, so e.g. you can make
+          # a difference for macOS and create an app bundle there.
+          include-package: yt_dlp
+          static-libpython: yes
+          onefile: true
+
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{ matrix.os }} Build
+          path: | # match what's created for the 3 OSes
+            build/*.so
+            build/*.dll
+            build/*.bin
+            build/*.exe
