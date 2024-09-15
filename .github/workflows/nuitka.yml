@@ -16,14 +16,22 @@ jobs:
       - name: Check-out repository
         uses: actions/checkout@v4
 
+      - name: Setup Python
+        if: matrix.os != 'windows-latest'
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
       - uses: conda-incubator/setup-miniconda@v3
+        if: matrix.os == 'windows-latest'
         with:
           auto-update-conda: true
           python-version: 3.12
 
       - name: Install Python dev dependencies
+        if: matrix.os == 'windows-latest'
         run: |
-          conda install anaconda::libpython
+          conda install -c conda-forge libpython
 
       - name: Build Executable with Nuitka
         uses: Nuitka/Nuitka-Action@main
